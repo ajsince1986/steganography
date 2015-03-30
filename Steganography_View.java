@@ -219,7 +219,8 @@ public class Steganography_View extends JFrame
 	    	
 	    		//set basic display
 			setBackground(Color.lightGray);
-			setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+			setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "Encode"));
 		}
 	}
 	
@@ -264,7 +265,8 @@ public class Steganography_View extends JFrame
 	    	
 	    		//set basic display
 			setBackground(Color.lightGray);
-			setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+			setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "Decode"));
 		 }
 	 }
 }
