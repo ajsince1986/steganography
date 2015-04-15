@@ -32,14 +32,13 @@ public class Steganography_Controller
 	
 	//Panel Displays
 	private JPanel		decode_panel;
-	private JPanel		encode_panel;
 	private JPanel		login_panel;
+	private JPanel		encode_image_panel;
 	//Panel Variables
 	private JTextField 	username;
 	private JPasswordField password;
-	private JTextArea 	input;
-	private JButton		encodeButton,decodeButton, loginButton;
-	private JLabel		image_input;
+	private JButton		encodeImageButton, decodeButton, loginButton, secretImageButton;
+	private JLabel		secret_image_input, image_input;
 	//Menu Variables
 	private JMenuItem 	encode;
 	private JMenuItem 	decode;
@@ -49,9 +48,14 @@ public class Steganography_Controller
 	private Encode			enc;
 	private Decode			dec;
 	private LoginButton 	logButton;
-	private EncodeButton	encButton;
+	private SecretImageButton secImageButton;
+	private EncodeImageButton encImageButton;
 	private DecodeButton	decButton;
 	
+	//encode variable
+	private String 			secret_stat_ext  = "";
+	private String 			secret_stat_path = "";
+	private String 			secret_stat_name = "";
 	//decode variable
 	private String			stat_path = "";
 	private String			stat_name = "";
@@ -68,19 +72,21 @@ public class Steganography_Controller
 		model = aModel;
 		
 		//assign View Variables
-		//3 views
+		
 		login_panel 	= view.getLoginPanel();
-		encode_panel	= view.getTextPanel();
+		encode_image_panel = view.getEncodeImagePanel();
 		decode_panel	= view.getImagePanel();
-		//4 data options
+		
 		username 		= view.getUsername();
 		password		= view.getPassword();
-		input			= view.getText();
+		secret_image_input = view.getSecretImageInput();
 		image_input		= view.getImageInput();
-		//3 buttons
+		
 		loginButton 	= view.getLButton();
-		encodeButton	= view.getEButton();
+		secretImageButton = view.getSButton();
+		encodeImageButton = view.getEIButton();
 		decodeButton	= view.getDButton();
+		
 		//menu
 		encode			= view.getEncode();
 		decode			= view.getDecode();
@@ -94,8 +100,10 @@ public class Steganography_Controller
 		exit.addActionListener(new Exit());
 		logButton = new LoginButton();
 		loginButton.addActionListener(logButton);
-		encButton = new EncodeButton();
-		encodeButton.addActionListener(encButton);
+		secImageButton = new SecretImageButton();
+		secretImageButton.addActionListener(secImageButton);
+		encImageButton = new EncodeImageButton();
+		encodeImageButton.addActionListener(encImageButton);
 		decButton = new DecodeButton();
 		decodeButton.addActionListener(decButton);
 		
@@ -112,14 +120,14 @@ public class Steganography_Controller
 		view.setContentPane(login_panel);
 		view.setVisible(true);
 	}
-	
+
 	/*
 	 *Updates the single panel to display the Encode View.
 	 */
-	private void encode_view()
+	private void encode_image_view()
 	{
 		update();
-		view.setContentPane(encode_panel);
+		view.setContentPane(encode_image_panel);
 		view.setVisible(true);
 	}
 	
@@ -144,7 +152,7 @@ public class Steganography_Controller
 		 */
 		public void actionPerformed(ActionEvent e)
 		{
-			encode_view(); //show the encode view
+			encode_image_view(); //show the encode view
 		}
 	}
 	
@@ -167,10 +175,10 @@ public class Steganography_Controller
 			chooser.setFileFilter(new Image_Filter());
 			int returnVal = chooser.showOpenDialog(view);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
-{
+			{
 				File directory = chooser.getSelectedFile();
 				try
-{
+				{
 					String image = directory.getPath();
 					stat_name = directory.getName();
 					stat_path = directory.getPath();
@@ -219,7 +227,7 @@ public class Steganography_Controller
 				char [] correctPass = {'a','d','m','i','n','1','2','3'};
 				if (correctPass.length == pass.length) {
 					if (Arrays.equals(pass, correctPass)) {
-						encode_view();
+						encode_image_view();
 						encode.setEnabled(true);
 						decode.setEnabled(true);
 					} else {
@@ -236,11 +244,48 @@ public class Steganography_Controller
 			}
 		}
 	}
-	
+
 	/*
-	 *Encode Button Class - handles the Encode Button item
+	 *Secret Button Class - handles the Secret Button item
 	 */
-	private class EncodeButton implements ActionListener
+	private class SecretImageButton implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			//start path of displayed File Chooser
+			JFileChooser chooser = new JFileChooser("./");
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setFileFilter(new Image_Filter());
+			int returnVal = chooser.showOpenDialog(view);
+			if (returnVal == JFileChooser.APPROVE_OPTION)
+			{
+				File directory = chooser.getSelectedFile();
+				try
+				{
+					String image = directory.getPath();
+					secret_stat_ext  = Image_Filter.getExtension(directory);
+					secret_stat_name = directory.getName();
+					secret_stat_path = directory.getPath();
+					secret_stat_path = secret_stat_path.substring(0,secret_stat_path.length()-secret_stat_name.length()-1);
+					secret_stat_name = secret_stat_name.substring(0, secret_stat_name.length()-4);
+					secret_image_input.setIcon(new ImageIcon(ImageIO.read(new File(image))));
+					secretImageButton.setVisible(false);
+					encodeImageButton.setVisible(true);
+				}
+				catch(Exception except) {
+				//msg if opening fails
+				JOptionPane.showMessageDialog(view, "The File cannot be opened!", 
+					"Error!", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			
+		}
+	}
+
+	/*
+	 *Encode Image Button Class - handles the Encode Image Button item
+	 */
+	private class EncodeImageButton implements ActionListener
 	{
 		/*
 		 *handles the click event
@@ -256,26 +301,28 @@ public class Steganography_Controller
 			if (returnVal == JFileChooser.APPROVE_OPTION){
 				File directory = chooser.getSelectedFile();
 				try{
-					String text = input.getText();
 					String ext  = Image_Filter.getExtension(directory);
 					String name = directory.getName();
 					String path = directory.getPath();
 					path = path.substring(0,path.length()-name.length()-1);
 					name = name.substring(0, name.length()-4);
+
+					System.out.println(path);
+					System.out.println(name);
+					System.out.println(ext);
 					
 					String stegan = JOptionPane.showInputDialog(view,
 							"Enter output file name:", "File name",
 							JOptionPane.PLAIN_MESSAGE);
-					
-					if(model.encode(path,name,ext,stegan,text))
+
+					if(model.encode_image(path, name, ext, stegan, secret_stat_path, secret_stat_name, secret_stat_ext))
 					{
 						JOptionPane.showMessageDialog(view, "The Image was encoded Successfully!", 
 							"Success!", JOptionPane.INFORMATION_MESSAGE);
-					}
+					}					
 					else
 					{
-						JOptionPane.showMessageDialog(view,  
-"The Image could not be encoded!", 
+						JOptionPane.showMessageDialog(view, "The Image could not be encoded!", 
 							"Error!", JOptionPane.INFORMATION_MESSAGE);
 					}
 					//display the new image
@@ -284,13 +331,11 @@ public class Steganography_Controller
 				}
 				catch(Exception except) {
 					//msg if opening fails
-					JOptionPane.showMessageDialog(view,  
-"The File cannot be opened!", 
+					JOptionPane.showMessageDialog(view, "The File cannot be opened!", 
 						"Error!", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		}
-		
 	}
 	
 	/*
@@ -304,19 +349,29 @@ public class Steganography_Controller
 		 */
 		public void actionPerformed(ActionEvent e)
 		{
-			String message = model.decode(stat_path, stat_name);
+			// String message = model.decode(stat_path, stat_name);
+			BufferedImage dec_sec_image = model.decode_image(stat_path, stat_name);
 			System.out.println(stat_path + ", " + stat_name);
-			if(message != "")
+			System.out.println(dec_sec_image);
+			if(dec_sec_image != null)
 			{
-				encode_view();
-				JOptionPane.showMessageDialog(view,  
-"The Image was decoded Successfully!",  "Success!",  JOptionPane.INFORMATION_MESSAGE);
-				input.setText(message);
+				//encode_image_view();
+				JOptionPane.showMessageDialog(view, "The Image was decoded Successfully!", 
+					"Success!",  JOptionPane.INFORMATION_MESSAGE);
+				image_input.setIcon(new ImageIcon(dec_sec_image));
+				decodeButton.setVisible(false);
+				// try {
+				// 	File outputfile = new File("test_output.png");
+				// 	ImageIO.write(dec_sec_image, "png", outputfile);
+				// }
+				// catch(Exception er) {
+				// 	System.out.println(er);
+				// }
 			}
 			else
 			{
 				JOptionPane.showMessageDialog(view, "The Image could not be decoded!", 
-							"Error!", JOptionPane.INFORMATION_MESSAGE);
+					"Error!", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 	}
@@ -326,7 +381,6 @@ public class Steganography_Controller
 	 */
 	public void update()
 	{
-		input.setText("");		//clear textarea
 		image_input.setIcon(null);	//clear image
 		stat_path = "";			//clear path
 		stat_name = "";			//clear name

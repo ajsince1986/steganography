@@ -33,10 +33,9 @@ public class Steganography_View extends JFrame
 	//elements for JPanel
 	private JTextField input_username;
 	private JPasswordField input_password;
-	private JTextArea 	input;
 	private JScrollBar 	scroll,scroll2;
-	private JButton		encodeButton,decodeButton, loginButton;
-	private JLabel		image_input, username_label, password_label;
+	private JButton		encodeImageButton, decodeButton, loginButton, secretButton;
+	private JLabel		secret_image_input, image_input, username_label, password_label;
 	
 	//elements for Menu
 	private JMenu 		file;
@@ -97,21 +96,21 @@ public class Steganography_View extends JFrame
 	 */
 	public JPasswordField 	getPassword() 	{ return input_password; }
 	/*
-	 *@return The TextArea containing the text to encode
+	 *@return The JLabel containing the secret image to encode
 	 */
-	public JTextArea	getText()		{ return input;			}
+	public JLabel		getSecretImageInput() { return secret_image_input;	}
 	/*
 	 *@return The JLabel containing the image to decode text from
 	 */
 	public JLabel		getImageInput()	{ return image_input;		}
 	/*
-	 *@return The JPanel displaying the Encode View
+	 *@return The JPanel displaying the Login View
 	 */
 	public JPanel		getLoginPanel()		{ return new Login_Panel();	}
 	/*
-	 *@return The JPanel displaying the Encode View
+	 *@return The JPanel displaying the Encode Image View
 	 */
-	public JPanel		getTextPanel()		{ return new Text_Panel();	}
+	public JPanel		getEncodeImagePanel()	{ return new Encode_Image_Panel();	}
 	/*
 	 *@return The JPanel displaying the Decode View
 	 */
@@ -121,9 +120,13 @@ public class Steganography_View extends JFrame
 	 */
 	public JButton		getLButton()		{ return loginButton;		}
 	/*
-	 *@return The Encode button
+	 *@return The secret image select button
 	 */
-	public JButton		getEButton()		{ return encodeButton;		}
+	public JButton		getSButton()		{ return secretButton;		}
+	/*
+	 *@return The Encode Image button
+	 */
+	public JButton		getEIButton()		{ return encodeImageButton;		}
 	/*
 	 *@return The Decode button
 	 */
@@ -180,47 +183,55 @@ public class Steganography_View extends JFrame
 	}
 
 	/*
-	 *Class Text_Panel
+	 *Class Encode_Image_Panel
 	 */
-	private class Text_Panel extends JPanel
+	private class Encode_Image_Panel extends JPanel
 	{
 		/*
-		 *Constructor to enter text to be encoded
+		 *Constructor to select secret image to be encoded
 		 */
-		public Text_Panel()
+		public Encode_Image_Panel()
 		{
 			//setup GridBagLayout
-			GridBagLayout layout = new GridBagLayout(); 
+			GridBagLayout layout = new GridBagLayout();
 			GridBagConstraints layoutConstraints = new GridBagConstraints(); 
 			setLayout(layout);
-			
-			input = new JTextArea();
-			layoutConstraints.gridx 	= 0; layoutConstraints.gridy = 0; 
-			layoutConstraints.gridwidth = 1; layoutConstraints.gridheight = 1; 
-			layoutConstraints.fill 		= GridBagConstraints.BOTH; 
-			layoutConstraints.insets 	= new Insets(0,0,0,0); 
-			layoutConstraints.anchor 	= GridBagConstraints.CENTER; 
-			layoutConstraints.weightx 	= 1.0; layoutConstraints.weighty = 50.0;
-			JScrollPane scroll = new JScrollPane(input,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); 
-			layout.setConstraints(scroll,layoutConstraints);
-			scroll.setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
-	    		add(scroll);
-	    	
-	    		encodeButton = new JButton("Encode Now");
-	    		layoutConstraints.gridx 	= 0; layoutConstraints.gridy = 1; 
-			layoutConstraints.gridwidth = 1; layoutConstraints.gridheight = 1; 
-			layoutConstraints.fill 		= GridBagConstraints.BOTH; 
-			layoutConstraints.insets 	= new Insets(0,-5,-5,-5); 
-			layoutConstraints.anchor 	= GridBagConstraints.CENTER; 
-			layoutConstraints.weightx 	= 1.0; layoutConstraints.weighty = 1.0;
-			layout.setConstraints(encodeButton,layoutConstraints);
-	    		add(encodeButton);
-	    	
-	    		//set basic display
-			setBackground(Color.lightGray);
-			setBorder(BorderFactory.createTitledBorder(
+
+			secretButton = new JButton("Select Secret Image");
+
+			layoutConstraints.insets 	= new Insets(10,10,10,10);
+			layoutConstraints.anchor 	= GridBagConstraints.WEST;
+
+			layoutConstraints.gridx 	= 0;
+        	layoutConstraints.gridy 	= 0;
+        	layoutConstraints.gridwidth = 1;
+        	layoutConstraints.anchor 	= GridBagConstraints.CENTER;
+        	add(secretButton, layoutConstraints);
+
+        	secret_image_input = new JLabel();
+        	layoutConstraints.gridx 	= 0;
+        	layoutConstraints.gridy 	= 1;
+        	layoutConstraints.anchor 	= GridBagConstraints.CENTER;
+        	add(secret_image_input, layoutConstraints);
+
+        	encodeImageButton = new JButton("Encode Image Now");
+        	layoutConstraints.gridx 	= 0;
+        	layoutConstraints.gridy 	= 2;
+        	layoutConstraints.gridwidth = 1; 
+        	layoutConstraints.gridheight = 1; 
+        	layoutConstraints.fill 		= GridBagConstraints.BOTH; 
+        	layoutConstraints.weightx 	= 1.0; 
+        	layoutConstraints.weighty = 1.0;
+        	layoutConstraints.anchor = GridBagConstraints.PAGE_END;
+        	layoutConstraints.fill = GridBagConstraints.CENTER;
+			layout.setConstraints(encodeImageButton,layoutConstraints);
+	    	add(encodeImageButton);
+	    	encodeImageButton.setVisible(false);
+
+        	setBackground(Color.lightGray);
+        	setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "Encode"));
+
 		}
 	}
 	
