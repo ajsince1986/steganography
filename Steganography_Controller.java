@@ -387,7 +387,7 @@ public class Steganography_Controller
 	}
 
 	public static void main(String[] args) {
-		Steganography_View sv = new Steganography_View("Manali Project");
+		Steganography_View sv = new Steganography_View("My Project");
 		Steganography sm = new Steganography();
 		Steganography_Controller sc = new Steganography_Controller(sv, sm);
 	}
